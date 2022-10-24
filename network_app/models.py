@@ -4,7 +4,7 @@ from django.urls import reverse
 
 
 class Profile(models.Model):
-    '''модель юзера'''
+    """Модель юзера"""
     user = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name='Пользователь')
     image = models.ImageField(upload_to='users/%Y/%m/%d', blank=True, verbose_name='Изображение')
     date_of_birth = models.DateField(blank=True, null=True)
@@ -30,8 +30,8 @@ class Post(models.Model):
     date = models.DateTimeField(auto_now_add=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='poster')
     text = models.TextField(max_length=120, verbose_name='Текст')
-    image = models.ImageField(upload_to='posts/%Y/%m/%d')
-    slug = models.SlugField(max_length=255, unique=True, db_index=True, verbose_name="URL")
+    image = models.ImageField(upload_to='posts/%Y/%m/%d') #blank
+    slug = models.SlugField(max_length=255, unique=True, db_index=True, verbose_name="URL") #uniqe
 
     def __str__(self):
         return f'{self.title}'
@@ -40,18 +40,18 @@ class Post(models.Model):
         return reverse('post', kwargs={'post_slug': self.slug})
 
     class Meta:
-        ordering = ['-created']
+        ordering = ['-date']
 
 
 class Comment(models.Model):
     date = models.DateTimeField(auto_now_add=True)
-    author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Автор комментария', related_name='poster')
+    author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Автор комментария', related_name='author')
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     text = models.TextField(max_length=140, blank=True)
     active = models.BooleanField(default=True)
 
     class Meta:
-        ordering = ('created',)
+        ordering = ('date',)
 
     def __str__(self):
         return f'Комментарий от {self.author} к {self.post}'
